@@ -9,9 +9,15 @@ bot.help((ctx) => ctx.reply('Комманда /menu'))
 bot.on('sticker', (ctx) => ctx.reply('👍'))
 bot.hears('hi', (ctx) => ctx.reply('Hey there'))
 
+console.log("Bind port")
+let port = process.env.PORT || 80
+bot.startWebhook('/secret-path', null, port)
+
+console.log("Create custom commands")
 let mm = new MenuManager();
 bot.hears('menu', async (ctx) => ctx.reply(await mm.getMenus()))
 bot.command('menu', async (ctx) => ctx.reply(await mm.getMenus()))
+
 
 console.log("Start Bot")
 bot.launch()
