@@ -1,53 +1,35 @@
-const fetch = require('node-fetch');
-const HTMLParser = require('node-html-parser');
+import { Restaurant, Menu } from "./Restaurants/Restaurant";
+import { Kolkovna } from "./Restaurants/Kolkovna";
 
-interface LunchMenu {
+
+export class LunchMenu {
     restaurantName: string;
-    day: string;
-    dishes: Array<string>
-}
+    today: Menu;
 
-interface Dish {
-    name: string;
-    translatedname: string;
-    price: string;
+    public constructor(init?:Partial<LunchMenu>) {
+        Object.assign(this, init);
+    }
+
+    toString(){
+        return `Restaurant *${this.restaurantName}* \n${this.today.toString()}`
+    }
 }
 
 export class MenuManager {
 
-    async getMenus(): Promise<Array<LunchMenu | void>> {
-
-        return [await this.kolkovna()];
+    async getMenus(): Promise<Array<LunchMenu>> {
+        let places = this.getRestaurants();
+        return Promise.all(places.map(
+            async (place:Restaurant) => {
+                return new LunchMenu({
+                    restaurantName: place.getName(),
+                    today: await place.getTodayMenu()
+                });
+            }
+        ));
     }
 
-    async kolkovna(): Promise<LunchMenu | void> {
-        return await fetch("https://www.kolkovna.cz/en/kolkovna-argentinska-23")
-            .then((response: Response) => response.text())
-            .then(text => {
-                const root: HTMLElement = HTMLParser.parse(text);
-                let date: any = root.querySelector('div.dailyMenuWeek h2.brown').childNodes[0];
-                let table = root.querySelector('div.dailyMenuWeek table.menu.dailyMenu').childNodes;
-                //console.log(table)
-
-                let dishes: Array<Dish> = [];
-                for (const item of table) {
-                    if (item.nodeType !== 1) continue; //not htmlelement
-                    let h = item as HTMLElement;
-                    //console.log(h)
-
-                    let dname: any = h.querySelector('.name').childNodes[0];
-                    let dprice: any = h.querySelector('.price').childNodes[0];
-                    dishes.push({
-                        name: dname.rawText,
-                        translatedname: dname.rawText,
-                        price: dprice.rawText
-                    })
-                }
-                return ({
-                    restaurantName: "Kolkovna",
-                    day: date.rawText,
-                    dishes: dishes
-                });
-            });
+    getRestaurants():Array<Restaurant>{
+        return [new Kolkovna()];
     }
 }
