@@ -3,7 +3,7 @@ export class Dish {
     translatedname: string;
     price: string;
 
-    public constructor(init?:Partial<Dish>) {
+    public constructor(init?: Partial<Dish>) {
         Object.assign(this, init);
     }
 
@@ -16,12 +16,12 @@ export class Menu {
     date: string;
     dishes: Array<Dish>
 
-    public constructor(init?:Partial<Menu>) {
+    public constructor(init?: Partial<Menu>) {
         Object.assign(this, init);
     }
 
     public toString(): string {
-        return `Menu for ${this.date} \n ${this.dishes.map(dish => `\n– ${dish.toString()}`)}`;
+        return `Menu for ${this.date} \n ${this.dishes ? this.dishes.map(dish => `\n– ${dish.toString()}`) : "Unknown dishes"}`;
     }
 }
 

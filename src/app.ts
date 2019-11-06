@@ -2,7 +2,9 @@ import { MenuManager } from "./LunchMenu";
 import Telegraf, { ContextMessageUpdate } from "telegraf";
 
 console.log("Register Bot")
-const bot: Telegraf<ContextMessageUpdate>  = new Telegraf(process.env.BOT_TOKEN)
+console.log(process.argv)
+let port = process.argv && process.argv[2] ? process.argv[2] : process.env.BOT_TOKEN
+const bot: Telegraf<ContextMessageUpdate>  = new Telegraf(port)
 bot.start((ctx) => ctx.reply('Привет, это бот, который аггрегирует меню из ближайших заведений'))
 bot.help((ctx) => ctx.reply('Команда /menu'))
 
@@ -11,7 +13,9 @@ console.log("Create custom commands")
 let mm = new MenuManager();
 bot.command('menu', async (ctx) => {
     console.log(ctx.from);
-    ctx.reply(`${(await mm.getMenus()).map(m => m.toString())}`, {parse_mode:"Markdown"})
+    (await mm.getMenus()).map(m => {
+        ctx.reply(`${m.toString()}`, {parse_mode:"Markdown"})
+    })
 })
 
 console.log("Start Bot")
