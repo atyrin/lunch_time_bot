@@ -4,7 +4,8 @@
   "description": "lunch places bot",
   "main": "app.ts",
   "scripts": {
-    "test": "echo \"Heroku web\"",
+    "test": "jest",
+    "web": "echo \"Heroku web\"",
     "start": "tsc && node ./dist/app.js"
   },
   "author": "atyrin",
@@ -17,5 +18,10 @@
   },
   "engines": {
     "node": "8.x"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.22",
+    "jest": "^24.9.0",
+    "ts-jest": "^24.1.0"
   }
 }
