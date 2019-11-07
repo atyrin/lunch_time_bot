@@ -14,8 +14,13 @@ let mm = new MenuManager();
 bot.command('menu', async (ctx) => {
     console.log(ctx.from);
     (await mm.getMenus()).map(m => {
-        ctx.reply(`${m.toString()}`, {parse_mode:"Markdown"})
-    })
+        if(m.pictureLink){
+            ctx.replyWithPhoto(m.pictureLink, { caption: `${m.toString()}`, parse_mode:"Markdown"})
+        }
+        else{
+            ctx.reply(`${m.toString()}`, {parse_mode:"Markdown"})
+        }
+    });
 })
 
 console.log("Start Bot")

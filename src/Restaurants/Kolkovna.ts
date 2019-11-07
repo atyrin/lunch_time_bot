@@ -9,6 +9,10 @@ export class Kolkovna implements Restaurant {
         return "Kolkovna Argentinska"
     }
 
+    getMenuPicture(): Promise<string> {
+        return null;
+    }
+
     async getTodayMenu(): Promise<Menu> {
         return await fetch(this.URL)
             .then((response: Response) => response.text())

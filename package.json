@@ -6,13 +6,14 @@
   "scripts": {
     "test": "jest",
     "web": "echo \"Heroku web\"",
-    "start": "tsc && node ./dist/app.js"
+    "start": "tsc && node ./dist/src/app.js"
   },
   "author": "atyrin",
   "license": "ISC",
   "dependencies": {
     "node-fetch": "^2.6.0",
     "node-html-parser": "^1.1.16",
+    "phantom": "^6.3.0",
     "telegraf": "^3.33.3",
     "typescript": "^3.7.2"
   },

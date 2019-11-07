@@ -13,6 +13,10 @@ export class LaCasaTrattoria implements Restaurant {
         return token
     }
 
+    getMenuPicture(): Promise<string> {
+        return null;
+    }
+
     async getTodayMenu(): Promise<Menu> {
         console.log("Loading menu for LaCasaTrattoria")
         return await fetch(this.URL, {
@@ -31,6 +35,7 @@ export class LaCasaTrattoria implements Restaurant {
                         price: item.dish.price
                     })
                 });
+                console.log("LaCasaTrattoria done")
                 return new Menu({
                     date: date,
                     dishes: dishes
