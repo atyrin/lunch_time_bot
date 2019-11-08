@@ -16,8 +16,15 @@ export class BreakTimeBistro implements Restaurant {
         const page = await instance.createPage();
 
         await page.open(this.URL);
+
+        let qs = await page.invokeMethod('evaluate', function() {
+            return document.querySelector('#root > div > div > ul > a + a + a + a');
+        })
+        console.log(qs);
         let url = await page.invokeMethod('evaluate', function() {
-            return document.querySelector('#root > div > div > ul > a + a + a + a').getAttribute("href");
+            var iqs = document.querySelector('#root > div > div > ul > a + a + a + a');
+            console.log(iqs);
+            return iqs.getAttribute("href");
         })
         console.log(url);
         console.log("Break Time Bisto done")
