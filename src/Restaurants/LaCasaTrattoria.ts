@@ -13,6 +13,10 @@ export class LaCasaTrattoria implements Restaurant {
         return token
     }
 
+    getMenuPicture(): Promise<string> {
+        return null;
+    }
+
     async getTodayMenu(): Promise<Menu> {
         console.log("Loading menu for LaCasaTrattoria")
         return await fetch(this.URL, {
@@ -22,24 +26,29 @@ export class LaCasaTrattoria implements Restaurant {
         })
             .then((response: Response) => response.json())
             .then(json => {
-                let menu = json.daily_menus[0].daily_menu;
-                let date = menu.start_date;
-                let dishes: Array<Dish> = menu.dishes.map(item => {
-                    return new Dish({
-                        name: item.dish.name,
-                        translatedname: item.dish.name,
-                        price: item.dish.price
-                    })
-                });
-                return new Menu({
-                    date: date,
-                    dishes: dishes
-                });
+                console.log(json)
+                if (!json.daily_menus[0]) {
+                    return null;
+                }
+                return this.parseMenu(json.daily_menus);
             });
     }
 
-    async getWeekMenu(): Promise<Array<Menu>> {
-        return [await this.getTodayMenu()];
+    parseMenu(dailymenus): Menu {
+        let menu = dailymenus[0].daily_menu;
+        let date = menu.start_date;
+        let dishes: Array<Dish> = menu.dishes.map(item => {
+            return new Dish({
+                name: item.dish.name,
+                translatedname: item.dish.name,
+                price: item.dish.price
+            })
+        });
+        console.log("LaCasaTrattoria done")
+        return new Menu({
+            date: date,
+            dishes: dishes
+        });
     }
 }
 

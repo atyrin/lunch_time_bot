@@ -1,2 +1,2 @@
-web: npm test
+web: npm web
 worker: npm start
