@@ -16,33 +16,34 @@ export class Kolkovna implements Restaurant {
     async getTodayMenu(): Promise<Menu> {
         return await fetch(this.URL)
             .then((response: Response) => response.text())
-            .then(text => {
+            .then((text: string) => {
                 return this.parse(text);
             });
     }
 
-    async parse(text): Promise<Menu> {
+    async parse(text: string): Promise<Menu> {
         const root: HTMLElement = HTMLParser.parse(text);
         let date: string = await this.ejectDate(root);
         let dishes: Array<Dish> = await this.ejectDishes(root);
-
-        return new Menu({
-            date: date,
-            dishes: dishes
-        });
+        if (date && dishes) {
+            return new Menu({
+                date: date,
+                dishes: dishes
+            });
+        }
+        return null;
     }
 
     private async ejectDate(block: HTMLElement): Promise<string> {
         let dateBlock: any = block.querySelector('div.dailyMenuWeek h2.brown')
-        let date: any = dateBlock ? dateBlock.childNodes[0] : "Date is missed";
-        return date.rawText;
+        let date: any = dateBlock ? dateBlock.childNodes[0].rawText : null;
+        return date;
     }
 
     private async ejectDishes(block: HTMLElement): Promise<Array<Dish>> {
         const tableBlock = block.querySelector('div.dailyMenuWeek table.menu.dailyMenu');
-        if (!tableBlock) {
-            return [new Dish({ name: "Empty menu" })]
-        }
+        if (!tableBlock) return null;
+
         const table = tableBlock.childNodes;
         let dishes: Array<Dish> = [];
         for (const item of table) {
@@ -58,9 +59,5 @@ export class Kolkovna implements Restaurant {
             }))
         }
         return dishes;
-    }
-
-    async getWeekMenu(): Promise<Array<Menu>> {
-        return [await this.getTodayMenu()];
     }
 }

@@ -28,6 +28,5 @@ export class Menu {
 export interface Restaurant {
     getName(): string;
     getTodayMenu(): Promise<Menu>
-    getWeekMenu(): Promise<Array<Menu>>
     getMenuPicture(): Promise<string> 
 }

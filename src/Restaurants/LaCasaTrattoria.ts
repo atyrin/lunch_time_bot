@@ -27,28 +27,28 @@ export class LaCasaTrattoria implements Restaurant {
             .then((response: Response) => response.json())
             .then(json => {
                 console.log(json)
-                if(!json.daily_menus[0]){
-                  return [new Dish({name:"Empty menu"})]
+                if (!json.daily_menus[0]) {
+                    return null;
                 }
-                let menu = json.daily_menus[0].daily_menu;
-                let date = menu.start_date;
-                let dishes: Array<Dish> = menu.dishes.map(item => {
-                    return new Dish({
-                        name: item.dish.name,
-                        translatedname: item.dish.name,
-                        price: item.dish.price
-                    })
-                });
-                console.log("LaCasaTrattoria done")
-                return new Menu({
-                    date: date,
-                    dishes: dishes
-                });
+                return this.parseMenu(json.daily_menus);
             });
     }
 
-    async getWeekMenu(): Promise<Array<Menu>> {
-        return [await this.getTodayMenu()];
+    parseMenu(dailymenus): Menu {
+        let menu = dailymenus[0].daily_menu;
+        let date = menu.start_date;
+        let dishes: Array<Dish> = menu.dishes.map(item => {
+            return new Dish({
+                name: item.dish.name,
+                translatedname: item.dish.name,
+                price: item.dish.price
+            })
+        });
+        console.log("LaCasaTrattoria done")
+        return new Menu({
+            date: date,
+            dishes: dishes
+        });
     }
 }
 

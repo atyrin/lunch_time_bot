@@ -14,7 +14,10 @@ export class LunchMenu {
     }
 
     toString() {
-        return `Restaurant *${this.restaurantName}* \n${this.today ? this.today.toString() : ""}`
+        if(this.pictureLink){
+            return `Restaurant *${this.restaurantName}*`
+        }
+        return `Restaurant *${this.restaurantName}* \n${this.today ? this.today.toString() : "Empty menu"}`
     }
 }
 
