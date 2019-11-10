@@ -26,6 +26,10 @@ export class LaCasaTrattoria implements Restaurant {
         })
             .then((response: Response) => response.json())
             .then(json => {
+                console.log(json)
+                if(!json.daily_menus[0]){
+                  return [new Dish({name:"Empty menu"})]
+                }
                 let menu = json.daily_menus[0].daily_menu;
                 let date = menu.start_date;
                 let dishes: Array<Dish> = menu.dishes.map(item => {

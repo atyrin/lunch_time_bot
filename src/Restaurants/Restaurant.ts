@@ -8,7 +8,7 @@ export class Dish {
     }
 
     public toString = (): string => {
-        return `${this.name} –– ${this.price}`;
+        return `${this.name} ${this.price ? "–– " + this.price : ""}`;
     }
 }
 
