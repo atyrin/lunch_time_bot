@@ -1,7 +1,6 @@
 import { Restaurant, Menu, Dish } from "./Restaurant";
-
 const phantom = require('phantom');
-const HTMLParser = require('node-html-parser');
+
 
 export class BreakTimeBistro implements Restaurant {
     private readonly URL: string = "https://m.facebook.com/pg/breaktimebistro/menu/";
@@ -13,44 +12,41 @@ export class BreakTimeBistro implements Restaurant {
     async getMenuPicture(): Promise<string> {
         console.log("Loading menu for Break Time Bisto")
 
-        const instance = await phantom.create();
-        const page = await instance.createPage();
-        const isjs = await page.setting("javascriptEnabled");
-        const ua = await page.setting('userAgent');
-        console.log("js enabled: " + isjs);
-        console.log("user agent: " + ua);
+        const menuUrl = await this.renderFbPageAndEjectUrl();
 
-
-        const status = await page.open(this.URL);
-        console.log(`Status: ${status}`);
-        const content = await page.property('content');
-        //console.log(content);
-
-        //const contentURL = HTMLParser.parse(content).querySelector('#root > div > div > ul > a + a + a + a');
-        //console.warn(contentURL);
-        //console.warn(contentURL? contentURL.href : "NO HREF PROPERY");
-
-        let qs = await page.invokeMethod('evaluate', function() {
-            return document.querySelector('#root > table > tbody > tr > td > ul > a + a + a + a');
-        })
-
-        console.log(qs);
-        let url = await page.invokeMethod('evaluate', function() {
-            var iqs = document.querySelector('#root > div > div > ul > a + a + a + a');
-            console.log(iqs);
-            return iqs.getAttribute("href");
-        })
-        console.log(url);
-        await instance.exit();
         console.log("Break Time Bisto done")
-        return url;
+        return menuUrl;
     }
 
-    async getTodayMenu(): Promise<Menu> {        
+    async getTodayMenu(): Promise<Menu> {
         return null;
     }
 
     async getWeekMenu(): Promise<Array<Menu>> {
         return [await this.getTodayMenu()];
+    }
+
+    private async createPhantomPage(instance) {
+        const page = await instance.createPage();
+        await page.setting('userAgent', "Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1");
+        return page;
+    }
+
+    private async renderFbPageAndEjectUrl(): Promise<string> {
+        const instance = await phantom.create();
+        try {
+            const page = await this.createPhantomPage(instance);
+            const status = await page.open(this.URL);
+            console.log(`Page loading response status: ${status}`);
+
+            const menuUrl: string = await page.invokeMethod('evaluate', function () {
+                return document.querySelector('#root > table > tbody > tr > td > ul > a + a + a + a').getAttribute("href");
+            })
+            console.log(`Ejected URL: ${menuUrl}`);
+            return menuUrl;
+        }
+        finally {
+            await instance.exit();
+        }
     }
 }

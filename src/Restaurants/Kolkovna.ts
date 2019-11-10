@@ -33,13 +33,17 @@ export class Kolkovna implements Restaurant {
     }
 
     private async ejectDate(block: HTMLElement): Promise<string> {
-        let date: any = block.querySelector('div.dailyMenuWeek h2.brown').childNodes[0];
+        let dateBlock: any = block.querySelector('div.dailyMenuWeek h2.brown')
+        let date: any = dateBlock ? dateBlock.childNodes[0] : "Date is missed";
         return date.rawText;
     }
 
     private async ejectDishes(block: HTMLElement): Promise<Array<Dish>> {
-        let table = block.querySelector('div.dailyMenuWeek table.menu.dailyMenu').childNodes;
-
+        const tableBlock = block.querySelector('div.dailyMenuWeek table.menu.dailyMenu');
+        if (!tableBlock) {
+            return [new Dish({ name: "Empty menu" })]
+        }
+        const table = tableBlock.childNodes;
         let dishes: Array<Dish> = [];
         for (const item of table) {
             if (item.nodeType !== 1) continue; //not htmlelement
