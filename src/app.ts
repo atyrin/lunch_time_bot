@@ -1,5 +1,6 @@
 import { MenuManager } from "./LunchMenu";
 import Telegraf, { ContextMessageUpdate } from "telegraf";
+require('dotenv').config()
 
 console.log("Register Bot")
 console.log(process.argv)
