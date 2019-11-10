@@ -15,11 +15,15 @@ export class BreakTimeBistro implements Restaurant {
         const instance = await phantom.create();
         const page = await instance.createPage();
 
-        await page.open(this.URL);
+        const status = await page.open(this.URL);
+        console.log(`Status: ${status}`);
+        const content = await page.property('content');
+        console.log(content);
 
         let qs = await page.invokeMethod('evaluate', function() {
             return document.querySelector('#root > div > div > ul > a + a + a + a');
         })
+        
         console.log(qs);
         let url = await page.invokeMethod('evaluate', function() {
             var iqs = document.querySelector('#root > div > div > ul > a + a + a + a');
@@ -27,6 +31,7 @@ export class BreakTimeBistro implements Restaurant {
             return iqs.getAttribute("href");
         })
         console.log(url);
+        await instance.exit();
         console.log("Break Time Bisto done")
         return url;
     }
