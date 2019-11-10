@@ -17,7 +17,7 @@ export class LunchMenu {
         if(this.pictureLink){
             return `Restaurant *${this.restaurantName}*`
         }
-        return `📍 *${this.restaurantName}* \n${this.today ? this.today.toString() : "Empty menu"}`
+        return `📍 *${this.restaurantName}* \n ${this.today ? this.today.toString() : "Empty menu"}`
     }
 }
 
