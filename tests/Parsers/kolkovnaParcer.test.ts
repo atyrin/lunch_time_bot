@@ -1,20 +1,40 @@
 import { Kolkovna } from "../../src/Restaurants/Kolkovna";
 import { Menu } from "../../src/Restaurants/Restaurant";
 
+const HTMLParser = require('node-html-parser');
 
-test('parse kolkovna html', async () => {
-    let kolkovna = new Kolkovna()
-	let menu:Menu = await kolkovna.parse(rawHtml);
-	
-	expect(menu.date).toBe("Thursday - 07.11. 2019");
 
-	expect(menu.dishes[0].name).toBe("Gulášová polévka 1, 7, 9, 12");
-	expect(menu.dishes[0].price).toBe("35 CZK");
+describe('check translator module', () => {
+	test('parse kolkovna html', async () => {
+		let kolkovna = new Kolkovna()
+		let menu: Menu = await kolkovna.parse(rawHtml);
 
-	expect(menu.dishes[4].name).toBe("Kynuté knedlíky s jahodami a zakysanou smetanou 1, 3, 7");
-	expect(menu.dishes[4].price).toBe("119 CZK");
-  });
+		expect(menu.date).toBe("Thursday - 07.11. 2019");
 
+		expect(menu.dishes[0].name).toBe("Gulášová polévka 1, 7, 9, 12");
+		expect(menu.dishes[0].price).toBe("35 CZK");
+
+		expect(menu.dishes[4].name).toBe("Kynuté knedlíky s jahodami a zakysanou smetanou 1, 3, 7");
+		expect(menu.dishes[4].price).toBe("119 CZK");
+	});
+
+	test('load kolkovna html', async () => {
+		let kolkovna = new Kolkovna()
+		let menu: string = await kolkovna.loadMenu();
+		console.log(menu);
+		expect(menu).not.toBeNull();
+	});
+
+	test('parse kolkovna html', async () => {
+		let kolkovna = new Kolkovna()
+		let menu: string = await kolkovna.loadMenu();
+		const root: HTMLElement = HTMLParser.parse(menu);
+		console.log(root);
+		let parsedMenu = kolkovna.parse(menu);
+		console.log(parsedMenu.toString());
+		expect(root).not.toBeNull();
+	});
+});
 
 const rawHtml = `<!DOCTYPE html>
 <html>

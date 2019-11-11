@@ -21,7 +21,7 @@ export class Menu {
     }
 
     public toString(): string {
-        return `🗓 ${this.date} \n ${this.dishes ? this.dishes.map(dish => `\n  * ${dish.toString()}`) : "Unknown dishes"}`;
+        return `🗓 ${this.date} \n ${this.dishes ? this.dishes.map(dish => `\n* ${dish.toString()}`) : "Unknown dishes"}`;
     }
 }
 

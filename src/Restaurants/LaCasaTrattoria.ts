@@ -26,7 +26,6 @@ export class LaCasaTrattoria implements Restaurant {
         })
             .then((response: Response) => response.json())
             .then(json => {
-                console.log(json)
                 if (!json.daily_menus[0]) {
                     return null;
                 }

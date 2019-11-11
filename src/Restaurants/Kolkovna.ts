@@ -14,17 +14,25 @@ export class Kolkovna implements Restaurant {
     }
 
     async getTodayMenu(): Promise<Menu> {
-        return await fetch(this.URL)
-            .then((response: Response) => response.text())
-            .then((text: string) => {
-                return this.parse(text);
-            });
+        const rawHtml = await this.loadMenu();
+        return this.parse(rawHtml);
     }
 
-    async parse(text: string): Promise<Menu> {
+    async loadMenu(): Promise<string> {
+        return await fetch(this.URL)
+            .then((response: Response) => {
+                if (response.status !== 200) {
+                    console.error(`[kolkovna] non successfull response: ${response.body}`)
+                }
+                return response.text();
+            })
+            .catch(error => console.warn(error));
+    }
+
+    parse(text: string): Menu {
         const root: HTMLElement = HTMLParser.parse(text);
-        let date: string = await this.ejectDate(root);
-        let dishes: Array<Dish> = await this.ejectDishes(root);
+        let date: string = this.ejectDate(root);
+        let dishes: Array<Dish> = this.ejectDishes(root);
         if (date && dishes) {
             return new Menu({
                 date: date,
@@ -34,13 +42,13 @@ export class Kolkovna implements Restaurant {
         return null;
     }
 
-    private async ejectDate(block: HTMLElement): Promise<string> {
+    private ejectDate(block: HTMLElement): string {
         let dateBlock: any = block.querySelector('div.dailyMenuWeek h2.brown')
-        let date: any = dateBlock ? dateBlock.childNodes[0].rawText : null;
+        let date: string = dateBlock ? dateBlock.childNodes[0].rawText : null;
         return date;
     }
 
-    private async ejectDishes(block: HTMLElement): Promise<Array<Dish>> {
+    private ejectDishes(block: HTMLElement): Array<Dish> {
         const tableBlock = block.querySelector('div.dailyMenuWeek table.menu.dailyMenu');
         if (!tableBlock) return null;
 

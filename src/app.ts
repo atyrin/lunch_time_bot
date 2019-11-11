@@ -16,15 +16,15 @@ let mm = new MenuManager();
 bot.command('menu', async (ctx) => {
     console.log(ctx.from);
     (await mm.getMenus()).map(
-        m => {
-            if (m.pictureLink) {
-                ctx.replyWithPhoto(m.pictureLink, { caption: `${m.toString()}`, parse_mode: "Markdown" })
+        menu => {
+            if (menu.pictureLink) {
+                ctx.replyWithPhoto(menu.pictureLink, { caption: `${menu.toString()}`, parse_mode: "Markdown" })
             }
             else {
                 ctx.reply(
-                    `${m.toString()}`,
-                    Extra.markdown().markup((m) => m.inlineKeyboard([
-                        m.callbackButton('Translate', 'translateToRussian'),
+                    menu.toString(),
+                    Extra.markdown().markup((mrk) => mrk.inlineKeyboard([
+                        mrk.callbackButton('Translate', 'translateToRussian'),
                     ])))
             }
         });
