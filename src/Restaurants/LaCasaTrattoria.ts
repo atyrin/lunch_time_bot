@@ -1,16 +1,12 @@
-import { Restaurant, Menu, Dish } from "./Restaurant";
+import { TranslatableRestaurant, Menu, Dish } from "./Restaurant";
+import Translator from "../Translator/Translator";
 const fetch = require('node-fetch');
 
-export class LaCasaTrattoria implements Restaurant {
+export class LaCasaTrattoria implements TranslatableRestaurant {
     private readonly URL: string = "https://developers.zomato.com/api/v2.1/dailymenu?res_id=18722781";
 
     getName(): string {
         return "La Casa Trattoria (Итальянцы)"
-    }
-
-    private getZomatoKey() {
-        let token = process.argv && process.argv[3] ? process.argv[3] : process.env.ZOMATO_TOKEN
-        return token
     }
 
     getMenuPicture(): Promise<string> {
@@ -19,6 +15,16 @@ export class LaCasaTrattoria implements Restaurant {
 
     async getTodayMenu(): Promise<Menu> {
         console.log("Loading menu for LaCasaTrattoria")
+        const menu = await this.loadMenu();
+        return await this.parseMenu(menu, async (a) => a);
+    }
+
+    async getTranslatedMenu(translator: Translator): Promise<Menu> {
+        const rawHtml = await this.loadMenu();
+        return await this.parseMenu(rawHtml, async (text) => await translator.translate(text));
+    }
+
+    async loadMenu() {
         return await fetch(this.URL, {
             headers: {
                 "user_key": this.getZomatoKey()
@@ -26,29 +32,33 @@ export class LaCasaTrattoria implements Restaurant {
         })
             .then((response: Response) => response.json())
             .then(json => {
-                console.log(json)
                 if (!json.daily_menus[0]) {
                     return null;
                 }
-                return this.parseMenu(json.daily_menus);
+                return json.daily_menus;
             });
     }
 
-    parseMenu(dailymenus): Menu {
+    async parseMenu(dailymenus, translate: (o:string) => Promise<string>): Promise<Menu> {
         let menu = dailymenus[0].daily_menu;
         let date = menu.start_date;
-        let dishes: Array<Dish> = menu.dishes.map(item => {
+        let dishes: Promise<Array<Dish>> = Promise.all(menu.dishes.map(async (item) => {
             return new Dish({
                 name: item.dish.name,
-                translatedname: item.dish.name,
+                translatedname: await translate(item.dish.name),
                 price: item.dish.price
             })
-        });
+        }));
         console.log("LaCasaTrattoria done")
         return new Menu({
             date: date,
-            dishes: dishes
+            dishes: await dishes
         });
+    }
+
+    private getZomatoKey() {
+        let token = process.argv && process.argv[3] ? process.argv[3] : process.env.ZOMATO_TOKEN
+        return token
     }
 }
 

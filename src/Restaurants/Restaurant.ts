@@ -1,3 +1,5 @@
+import Translator from "../Translator/Translator";
+
 export class Dish {
     name: string;
     translatedname: string;
@@ -8,7 +10,11 @@ export class Dish {
     }
 
     public toString = (): string => {
-        return `${this.name} ${this.price ? "–– " + this.price : ""}`;
+        return `・ ${this.name} | ${this.price ? this.price : ""}`;
+    }
+
+    public toTranslatedString = (): string => {
+        return `・ ${this.translatedname} | ${this.price ? this.price : ""}`;
     }
 }
 
@@ -21,7 +27,11 @@ export class Menu {
     }
 
     public toString(): string {
-        return `Menu for ${this.date} \n ${this.dishes ? this.dishes.map(dish => `\n– ${dish.toString()}`) : "Unknown dishes"}`;
+        return `🗓 ${this.date} \n${this.dishes ? this.dishes.map(dish => `\n${dish.toString()}`) : "Unknown dishes"}`;
+    }
+
+    public toTranslatedString(): string {
+        return `🗓 ${this.date} \n${this.dishes ? this.dishes.map(dish => `\n${dish.toTranslatedString()}`) : "Блюдо недоступно"}`;
     }
 }
 
@@ -29,4 +39,8 @@ export interface Restaurant {
     getName(): string;
     getTodayMenu(): Promise<Menu>
     getMenuPicture(): Promise<string> 
+}
+
+export interface TranslatableRestaurant extends Restaurant{
+    getTranslatedMenu(translator: Translator): Promise<Menu>
 }

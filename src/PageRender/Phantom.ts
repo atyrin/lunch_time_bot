@@ -13,7 +13,7 @@ export default class Phantom {
         this.instance = await phantom.create();
         this.page = await this.createPhantomPage();
         const status = await this.page.open(this.URL);
-        console.log(`Page loading response status: ${status}`);
+        console.log(`[phantom] Page loading response status: ${status}`);
     }
 
     close = async () => {
@@ -26,7 +26,7 @@ export default class Phantom {
             const uiObj: string = await this.page.invokeMethod('evaluate', function (s) {
                 return document.querySelector(s);
             }, selector)
-            console.log(`Ejected Object: ${uiObj}`);
+            console.log(`[phantom] Ejected Object: ${uiObj}`);
             return uiObj;
         }
         finally {
