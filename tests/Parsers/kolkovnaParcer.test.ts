@@ -1,13 +1,15 @@
 import { Kolkovna } from "../../src/Restaurants/Kolkovna";
 import { Menu } from "../../src/Restaurants/Restaurant";
+import YandexTranslator from '../../src/Translator/YandexTranslator'
+import Translator from "../../src/Translator/Translator";
 
 const HTMLParser = require('node-html-parser');
-
+require('dotenv').config()
 
 describe('check translator module', () => {
 	test('parse kolkovna html', async () => {
 		let kolkovna = new Kolkovna()
-		let menu: Menu = await kolkovna.parse(rawHtml);
+		let menu: Menu = await kolkovna.parse(rawHtml, async (a)=>a);
 
 		expect(menu.date).toBe("Thursday - 07.11. 2019");
 
@@ -30,8 +32,20 @@ describe('check translator module', () => {
 		let menu: string = await kolkovna.loadMenu();
 		const root: HTMLElement = HTMLParser.parse(menu);
 		console.log(root);
-		let parsedMenu = kolkovna.parse(menu);
+		let parsedMenu = await kolkovna.parse(menu, async (a)=>a);
 		console.log(parsedMenu.toString());
+		expect(root).not.toBeNull();
+	});
+
+	test('test translation', async () => {
+		let kolkovna = new Kolkovna()
+		let menu: string = await kolkovna.loadMenu();
+		const root: HTMLElement = HTMLParser.parse(menu);
+		console.log(root);
+		const translator: YandexTranslator = new YandexTranslator();
+
+		let parsedMenu = await kolkovna.parse(menu, async (text) => await translator.translate(text));
+		console.log(parsedMenu.toTranslatedString());
 		expect(root).not.toBeNull();
 	});
 });

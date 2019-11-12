@@ -1,9 +1,9 @@
+import Translator from './Translator';
 const fetch = require('node-fetch');
 
-export class YandexTranslator {
-    private readonly BASE_URL: string = "https://translate.yandex.net/api/v1.5/tr.json/translate?lang=cs-ru";
+export default class YandexTranslator implements Translator{
+    readonly BASE_URL: string = "https://translate.yandex.net/api/v1.5/tr.json/translate?lang=cs-ru";
     private _token: string;
-
 
     constructor(token: string = null) {
         this._token = token ? token : this.getApiTokenFromEnv();
@@ -15,7 +15,6 @@ export class YandexTranslator {
     }
 
     async translate(text: string): Promise<string> {
-        console.log("Token: " + this._token);
         return await fetch(this.BASE_URL + `&key=${this._token}`, {
             method: 'POST',
             body: `text=${text}`,
@@ -29,5 +28,4 @@ export class YandexTranslator {
                 return json.text
             });
     }
-
 }

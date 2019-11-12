@@ -1,4 +1,4 @@
-import {YandexTranslator} from '../../src/Translator/YandexTranslator';
+import YandexTranslator from '../../src/Translator/YandexTranslator';
 require('dotenv').config()
 
 describe('check translator module', () => {

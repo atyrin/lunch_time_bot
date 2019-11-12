@@ -3,12 +3,12 @@ import Telegraf, { ContextMessageUpdate, Extra } from "telegraf";
 require('dotenv').config()
 
 console.log("Register Bot")
-console.log(process.argv)
+console.log(`Arguments: ${process.argv}`);
 let port = process.argv && process.argv[2] ? process.argv[2] : process.env.BOT_TOKEN
+
 const bot: Telegraf<ContextMessageUpdate> = new Telegraf(port)
 bot.start((ctx) => ctx.reply('Привет, это бот, который аггрегирует меню из ближайших заведений'))
 bot.help((ctx) => ctx.reply('Для отображения меню ближайших ресторанов используйте команду /menu'))
-
 
 console.log("Create custom commands")
 
@@ -18,33 +18,48 @@ bot.command('menu', async (ctx) => {
     (await mm.getMenus()).map(
         menu => {
             if (menu.pictureLink) {
-                ctx.replyWithPhoto(menu.pictureLink, { caption: `${menu.toString()}`, parse_mode: "Markdown" })
+                ctx.replyWithPhoto(
+                    menu.pictureLink,
+                    {
+                        caption: `${menu.toString()}`,
+                        parse_mode: "Markdown"
+                    })
             }
             else {
                 ctx.reply(
                     menu.toString(),
-                    Extra.markdown().markup((mrk) => mrk.inlineKeyboard([
-                        mrk.callbackButton('Translate', 'translateToRussian'),
+                    Extra.markdown().markup((m) => m.inlineKeyboard([
+                        m.callbackButton('Translate', 'translateToRussian'),
                     ])))
             }
         });
 });
 
-bot.action('translateToRussian', (ctx) => {
-    console.log(ctx.from);
+bot.action('translateToRussian', async (ctx) => {
     console.log(ctx.callbackQuery.message.text);
+    const restaurantInMessage = mm.getRestaurantInstance(ctx.callbackQuery.message.text);
+    if(!restaurantInMessage){
+        ctx.editMessageText(
+            "Перевод недоступен\n" + ctx.callbackQuery.message.text,
+            Extra.markdown().markup((m) => m.inlineKeyboard([
+                m.callbackButton('Translate back', 'translateToCzech'),
+            ])))
+    }
+
+    const menu = await mm.getTranslatedMenu(restaurantInMessage);
     ctx.editMessageText(
-        `Message \n[${ctx.callbackQuery.message.text}] \nbut in russian`,
+        menu.toTranslatedString(),
         Extra.markdown().markup((m) => m.inlineKeyboard([
             m.callbackButton('Translate back', 'translateToCzech'),
         ])))
 })
 
-bot.action('translateToCzech', (ctx) => {
-    console.log(ctx.from);
+bot.action('translateToCzech', async (ctx) => {
     console.log(ctx.callbackQuery.message.text);
+    const restaurantInMessage = mm.getRestaurantInstance(ctx.callbackQuery.message.text);
+    const menu = await mm.getMenu(restaurantInMessage);
     ctx.editMessageText(
-        `Message [${ctx.callbackQuery.message.text}] but in original czech`,
+        menu.toString(),
         Extra.markdown().markup((m) => m.inlineKeyboard([
             m.callbackButton('Translate', 'translateToRussian'),
         ])))
