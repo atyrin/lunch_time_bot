@@ -22,7 +22,7 @@ export class LunchMenu {
     }
 
     toTranslatedString() {
-        return `📍 *${this.restaurantName}* \n ${this.today ? this.today.toTranslatedString() : "Меню недоступно"}`
+        return `📍 *${this.restaurantName}* \n ${this.today ? this.today.toTranslatedString() : "Меню недоступно"} \n\nПереведено сервисом «[Яндекс.Переводчик](http://translate.yandex.ru/)»`
     }
 }
 

@@ -1,16 +1,16 @@
 import { MenuManager } from "./LunchMenu";
 import Telegraf, { ContextMessageUpdate, Extra } from "telegraf";
-require('dotenv').config()
+require('dotenv').config();
 
-console.log("Register Bot")
+console.log("Register Bot");
 console.log(`Arguments: ${process.argv}`);
-let port = process.argv && process.argv[2] ? process.argv[2] : process.env.BOT_TOKEN
+let port = process.argv && process.argv[2] ? process.argv[2] : process.env.BOT_TOKEN;
 
-const bot: Telegraf<ContextMessageUpdate> = new Telegraf(port)
+const bot: Telegraf<ContextMessageUpdate> = new Telegraf(port);
 bot.start((ctx) => ctx.reply('Привет, это бот, который аггрегирует меню из ближайших заведений'))
 bot.help((ctx) => ctx.reply('Для отображения меню ближайших ресторанов используйте команду /menu'))
 
-console.log("Create custom commands")
+console.log("Create custom commands");
 
 let mm = new MenuManager();
 bot.command('menu', async (ctx) => {
@@ -36,7 +36,6 @@ bot.command('menu', async (ctx) => {
 });
 
 bot.action('translateToRussian', async (ctx) => {
-    console.log(ctx.callbackQuery.message.text);
     const restaurantInMessage = mm.getRestaurantInstance(ctx.callbackQuery.message.text);
     if(!restaurantInMessage){
         ctx.editMessageText(
@@ -52,10 +51,9 @@ bot.action('translateToRussian', async (ctx) => {
         Extra.markdown().markup((m) => m.inlineKeyboard([
             m.callbackButton('Translate back', 'translateToCzech'),
         ])))
-})
+});
 
 bot.action('translateToCzech', async (ctx) => {
-    console.log(ctx.callbackQuery.message.text);
     const restaurantInMessage = mm.getRestaurantInstance(ctx.callbackQuery.message.text);
     const menu = await mm.getMenu(restaurantInMessage);
     ctx.editMessageText(
@@ -63,7 +61,7 @@ bot.action('translateToCzech', async (ctx) => {
         Extra.markdown().markup((m) => m.inlineKeyboard([
             m.callbackButton('Translate', 'translateToRussian'),
         ])))
-})
+});
 
-console.log("Start Bot")
+console.log("Start Bot");
 bot.launch()

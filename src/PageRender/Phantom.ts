@@ -14,25 +14,25 @@ export default class Phantom {
         this.page = await this.createPhantomPage();
         const status = await this.page.open(this.URL);
         console.log(`[phantom] Page loading response status: ${status}`);
-    }
+    };
 
     close = async () => {
         if(this.instance) this.instance.exit();
-    }
+    };
 
     executeSelector = async (selector: string): Promise<any> => {
         try {
             await this.open();
             const uiObj: string = await this.page.invokeMethod('evaluate', function (s) {
                 return document.querySelector(s);
-            }, selector)
+            }, selector);
             console.log(`[phantom] Ejected Object: ${uiObj}`);
             return uiObj;
         }
         finally {
             await this.close();
         }
-    }
+    };
 
     private async createPhantomPage() {
         const page = await this.instance.createPage();

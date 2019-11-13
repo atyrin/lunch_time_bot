@@ -1,11 +1,11 @@
 # Installation
 1. clone source code
-2. download latest NODE.JS framework
+2. download the latest NODE.JS framework
 3. install dependencies: `npm install`
 4. start bot with: `npm start "bot_token" "zomato_token"`
 
 ## Tokens
-There are 2 ways to pass secret tokens to app:
+There are 2 ways to pass secret tokens to the app:
 1. Through npm params:  
     `npm start "bot_token" "zomato_token" "translator_token"`
 
@@ -17,8 +17,8 @@ There are 2 ways to pass secret tokens to app:
   ```  
 
 Zomato token you can get here: https://developers.zomato.com/api  
-Bot token is producing by Telegram Bot Father.
-Yandex Translator token 
+Bot token is producing by Telegram Bot Father.  
+Yandex Translator token you can generate here: https://translate.yandex.com/developers/keys
 
 
 # Test Run

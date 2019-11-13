@@ -1,5 +1,6 @@
-import { Menu, Dish, TranslatableRestaurant } from "./Restaurant";
+import {Dish, Menu, TranslatableRestaurant} from "./Restaurant";
 import Translator from "../Translator/Translator";
+
 const fetch = require('node-fetch');
 const HTMLParser = require('node-html-parser');
 
@@ -25,7 +26,7 @@ export class Kolkovna implements TranslatableRestaurant {
     }
 
     async loadMenu(): Promise<string> {
-        return await fetch(this.URL)
+        return fetch(this.URL)
             .then((response: Response) => {
                 if (response.status !== 200) {
                     console.error(`[kolkovna] non successfull response: ${response.body}`)
@@ -50,11 +51,10 @@ export class Kolkovna implements TranslatableRestaurant {
 
     private ejectDate(block: HTMLElement): string {
         let dateBlock: any = block.querySelector('div.dailyMenuWeek h2.brown')
-        let date: string = dateBlock ? dateBlock.childNodes[0].rawText : null;
-        return date;
+        return dateBlock ? dateBlock.childNodes[0].rawText : null;
     }
 
-    private async ejectDishes(block: HTMLElement, translate: (o:string) => Promise<string>): Promise<Array<Dish>> {
+    private async ejectDishes(block: HTMLElement, translate: (text:string) => Promise<string>): Promise<Array<Dish>> {
         const tableBlock = block.querySelector('div.dailyMenuWeek table.menu.dailyMenu');
         if (!tableBlock) return null;
 

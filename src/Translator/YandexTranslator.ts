@@ -15,7 +15,7 @@ export default class YandexTranslator implements Translator{
     }
 
     async translate(text: string): Promise<string> {
-        return await fetch(this.BASE_URL + `&key=${this._token}`, {
+        return fetch(this.BASE_URL + `&key=${this._token}`, {
             method: 'POST',
             body: `text=${text}`,
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
