@@ -4,8 +4,8 @@ import { BreakTimeBistro } from "../../src/Restaurants/BreakTimeBistro";
 test('get break time bistro menu', async () => {
   jest.setTimeout(30000);
   console.log("start test");
-    let kolkovna = new BreakTimeBistro()
-    let menuLink:string = await kolkovna.getMenuPicture()
+    let bistro = new BreakTimeBistro()
+    let menuLink:string = await bistro.getMenuPicture()
     expect(menuLink).toContain("fbcdn.net");
   });
 

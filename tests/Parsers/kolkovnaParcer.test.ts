@@ -4,11 +4,11 @@ import YandexTranslator from '../../src/Translator/YandexTranslator'
 import Translator from "../../src/Translator/Translator";
 
 const HTMLParser = require('node-html-parser');
-require('dotenv').config()
+require('dotenv').config();
 
-describe('check translator module', () => {
+describe('check kolkovna', () => {
 	test('parse kolkovna html', async () => {
-		let kolkovna = new Kolkovna()
+		let kolkovna = new Kolkovna();
 		let menu: Menu = await kolkovna.parse(rawHtml, async (a)=>a);
 
 		expect(menu.date).toBe("Thursday - 07.11. 2019");
@@ -42,7 +42,7 @@ describe('check translator module', () => {
 		let menu: string = await kolkovna.loadMenu();
 		const root: HTMLElement = HTMLParser.parse(menu);
 		console.log(root);
-		const translator: YandexTranslator = new YandexTranslator();
+		const translator: Translator = new YandexTranslator();
 
 		let parsedMenu = await kolkovna.parse(menu, async (text) => await translator.translate(text));
 		console.log(parsedMenu.toTranslatedString());

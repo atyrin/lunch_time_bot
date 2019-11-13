@@ -8,7 +8,7 @@ describe('check translator module', () => {
     });
   
     test('translate simple string', async () => {
-      const defaultText = "Jak se máš?"
+      const defaultText = "Jak se máš?";
 
       const translator = new YandexTranslator();
       const translatedText = await translator.translate(defaultText);

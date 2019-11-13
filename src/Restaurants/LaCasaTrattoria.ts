@@ -1,65 +1,66 @@
-import { TranslatableRestaurant, Menu, Dish } from "./Restaurant";
+import { Dish, Menu, TranslatableRestaurant } from "./Restaurant";
 import Translator from "../Translator/Translator";
+
 const fetch = require('node-fetch');
 
 export class LaCasaTrattoria implements TranslatableRestaurant {
-    private readonly URL: string = "https://developers.zomato.com/api/v2.1/dailymenu?res_id=18722781";
+	private readonly URL: string = "https://developers.zomato.com/api/v2.1/dailymenu?res_id=18722781";
 
-    getName(): string {
-        return "La Casa Trattoria (Итальянцы)"
-    }
+	getName(): string {
+		return "La Casa Trattoria (Итальянцы)"
+	}
 
-    getMenuPicture(): Promise<string> {
-        return null;
-    }
+	getMenuPicture(): Promise<string> {
+		return null;
+	}
 
-    async getTodayMenu(): Promise<Menu> {
-        console.log("Loading menu for LaCasaTrattoria")
-        const menu = await this.loadMenu();
-        return await this.parseMenu(menu, async (a) => a);
-    }
+	async getTodayMenu(): Promise<Menu> {
+		const menu = await this.loadMenu();
+		return await this.parseMenu(menu, async (a) => a);
+	}
 
-    async getTranslatedMenu(translator: Translator): Promise<Menu> {
-        const rawHtml = await this.loadMenu();
-        return await this.parseMenu(rawHtml, async (text) => await translator.translate(text));
-    }
+	async getTranslatedMenu(translator: Translator): Promise<Menu> {
+		const menu = await this.loadMenu();
+		return await this.parseMenu(menu, async (text) => await translator.translate(text));
+	}
 
-    async loadMenu() {
-        return await fetch(this.URL, {
-            headers: {
-                "user_key": this.getZomatoKey()
-            }
-        })
-            .then((response: Response) => response.json())
-            .then(json => {
-                if (!json.daily_menus[0]) {
-                    return null;
-                }
-                return json.daily_menus;
-            });
-    }
+	async loadMenu() {
+		return fetch(this.URL, {
+			headers: {
+				"user_key": this.getZomatoKey()
+			}
+		})
+			.then((response: Response) => response.json())
+			.then(json => {
+				return this.isMenuPresent(json) ? json.daily_menus : null;
+			});
+	}
 
-    async parseMenu(dailymenus, translate: (o:string) => Promise<string>): Promise<Menu> {
-        let menu = dailymenus[0].daily_menu;
-        let date = menu.start_date;
-        let dishes: Promise<Array<Dish>> = Promise.all(menu.dishes.map(async (item) => {
-            return new Dish({
-                name: item.dish.name,
-                translatedname: await translate(item.dish.name),
-                price: item.dish.price
-            })
-        }));
-        console.log("LaCasaTrattoria done")
-        return new Menu({
-            date: date,
-            dishes: await dishes
-        });
-    }
+	isMenuPresent(rawJson):boolean{
+		return Boolean(rawJson.daily_menus[0]);
+	}
 
-    private getZomatoKey() {
-        let token = process.argv && process.argv[3] ? process.argv[3] : process.env.ZOMATO_TOKEN
-        return token
-    }
+	async parseMenu(dailymenus, translate: (o: string) => Promise<string>): Promise<Menu> {
+		if(!dailymenus) return null;
+
+		let menu = dailymenus[0].daily_menu;
+		let date = menu.start_date;
+		let dishes: Promise<Array<Dish>> = Promise.all(menu.dishes.map(async (item) => {
+			return new Dish({
+				name: item.dish.name,
+				translatedname: await translate(item.dish.name),
+				price: item.dish.price
+			})
+		}));
+		return new Menu({
+			date: date,
+			dishes: await dishes
+		});
+	}
+
+	private getZomatoKey() {
+		return process.env.ZOMATO_TOKEN ? process.env.ZOMATO_TOKEN : process.argv[3]
+	}
 }
 
 

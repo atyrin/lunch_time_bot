@@ -9,13 +9,13 @@ export class BreakTimeBistro implements Restaurant {
     }
 
     async getMenuPicture(): Promise<string> {
-        console.log("Loading menu for Break Time Bisto")
+        console.log("Loading menu for Break Time Bisto");
 
         const ph = new Phantom(this.URL);
         const menu = await ph.executeSelector('#root > table > tbody > tr > td > ul > a + a + a + a');
         const menuUrl = menu.href;
 
-        console.log("Break Time Bisto done")
+        console.log("Break Time Bisto done");
         return menuUrl;
     }
 
