@@ -4,7 +4,7 @@ require('dotenv').config();
 
 console.log("Register Bot");
 console.log(`Arguments: ${process.argv}`);
-let port = process.argv && process.argv[2] ? process.argv[2] : process.env.BOT_TOKEN;
+const port = process.env.BOT_TOKEN ? process.env.BOT_TOKEN : process.argv[2];
 
 const bot: Telegraf<ContextMessageUpdate> = new Telegraf(port);
 bot.start((ctx) => ctx.reply('Привет, это бот, который аггрегирует меню из ближайших заведений'))
@@ -12,7 +12,7 @@ bot.help((ctx) => ctx.reply('Для отображения меню ближай
 
 console.log("Create custom commands");
 
-let mm = new MenuManager();
+const mm = new MenuManager();
 bot.command('menu', async (ctx) => {
     console.log(ctx.from);
     (await mm.getMenus()).map(
