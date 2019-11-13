@@ -27,26 +27,16 @@ export class LunchMenu {
 }
 
 export class MenuManager {
+    private readonly PLACES: Array<Restaurant> = [new Kolkovna(), new LaCasaTrattoria(), new BreakTimeBistro()];
 
     async getMenus(): Promise<Array<LunchMenu>> {
-        let places = this.getRestaurants();
-        return await Promise.all(places.map(
-            async (place: Restaurant) => {
-                return new LunchMenu({
-                    restaurantName: place.getName(),
-                    today: await place.getTodayMenu(),
-                    pictureLink: await place.getMenuPicture()
-                });
-            }
+        return await Promise.all(this.PLACES.map(
+            async (place: Restaurant) => await this.getMenu(place)
         ))
     }
 
-    private getRestaurants(): Array<Restaurant> {
-        return [new Kolkovna(), new LaCasaTrattoria(), new BreakTimeBistro()];
-    }
-
-    async getTranslatedMenu(place:TranslatableRestaurant):Promise<LunchMenu>{
-        if(!place) throw "Unsuppotred restaurant for translation";
+    async getTranslatedMenu(place: TranslatableRestaurant): Promise<LunchMenu> {
+        if (!place) throw "Unsuppotred restaurant for translation";
 
         const tranlator = new YandexTranslator();
         return new LunchMenu({
@@ -56,8 +46,8 @@ export class MenuManager {
         });
     }
 
-    async getMenu(place:Restaurant):Promise<LunchMenu>{
-        if(!place) throw "Unsuppotred restaurant";
+    async getMenu(place: Restaurant): Promise<LunchMenu> {
+        if (!place) throw "Unsupported restaurant";
 
         return new LunchMenu({
             restaurantName: place.getName(),
@@ -66,9 +56,9 @@ export class MenuManager {
         });
     }
 
-    getRestaurantInstance(text:string):TranslatableRestaurant{
-        if(text.includes("Kolkovna")) return new Kolkovna();
-        if(text.includes("Trattoria")) return new LaCasaTrattoria();
+    getRestaurantInstance(text: string): TranslatableRestaurant {
+        if (text.includes("Kolkovna")) return new Kolkovna();
+        if (text.includes("Trattoria")) return new LaCasaTrattoria();
         return null;
     }
 }
