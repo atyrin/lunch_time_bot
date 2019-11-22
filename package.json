@@ -15,6 +15,7 @@
     "node-fetch": "^2.6.0",
     "node-html-parser": "^1.1.16",
     "phantom": "^6.3.0",
+    "phantom-pool": "^1.2.2",
     "telegraf": "^3.33.3",
     "typescript": "^3.7.2"
   },
