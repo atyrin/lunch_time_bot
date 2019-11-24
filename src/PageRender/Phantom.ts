@@ -2,42 +2,27 @@ const createPhantomPool = require('phantom-pool')
 
 export default class Phantom {
     private readonly URL: string;
-    private instance;
-    private page;
-
     private static pool = Phantom.getPhantomPool()
 
     constructor(url: string) {
         this.URL = url;
     }
 
-    open = async () => {
-        await Phantom.pool.use(
+    executeSelector = async (selector: string): Promise<any> => {
+        return await Phantom.pool.use(
             async (instance) => {
-                this.page = await instance.createPage();
-                await this.page.setting('userAgent', "Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1");
-                const status = await this.page.open(this.URL);
+                const page = await instance.createPage();
+                await page.setting('userAgent', "Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1");
+                const status = await page.open(this.URL);
                 console.log(`[phantom] Page loading response status: ${status}`);
+
+                const uiObj: string = await page.invokeMethod('evaluate', function (s) {
+                    return document.querySelector(s);
+                }, selector);
+                console.log(`[phantom] Method was executeds`);
+                return uiObj;
             }
         )
-    };
-
-    close = async () => {
-        if (this.instance) this.instance.exit();
-    };
-
-    executeSelector = async (selector: string): Promise<any> => {
-        try {
-            await this.open();
-            const uiObj: string = await this.page.invokeMethod('evaluate', function (s) {
-                return document.querySelector(s);
-            }, selector);
-            console.log(`[phantom] Method was executeds`);
-            return uiObj;
-        }
-        finally {
-            await this.close();
-        }
     };
 
     public static getPhantomPool() {
