@@ -23,3 +23,8 @@ Yandex Translator token you can generate here: https://translate.yandex.com/deve
 
 # Test Run
 `npm test`
+
+# Heroku Deploy
+1. Create a dyno with nodejs
+2. Put the token variables in settings
+3. Deploy from a git repo
