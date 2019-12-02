@@ -39,6 +39,7 @@ export function registerRestaurantNameMessage(mm: MenuManager, bot: Telegraf<Con
         const requestedRestaurant = Places.get(AvailablePlaces[ctx.match[0]]);
         if (!requestedRestaurant) {
             ctx.reply(`Sorry, Place: ${ctx.match[0]} is not supported yet`)
+            return;
         }
         const menu = await mm.getMenu(requestedRestaurant);
         replyForMenu(menu, ctx);
