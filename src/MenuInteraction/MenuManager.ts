@@ -6,10 +6,11 @@ import YandexTranslator from "../Translator/YandexTranslator";
 import { LunchMenuMessage } from "./LunchMenu";
 import { CafeInmago } from "../Restaurants/CafeInmago";
 import { PetPenez } from "../Restaurants/PetPenez";
+import { Kozlovna } from "../Restaurants/Kozlovna";
 
 
 export class MenuManager {
-    private TOP_PLACES: Array<AvailablePlaces> = [AvailablePlaces.Kolkovna, AvailablePlaces.LaCasaTrattoria, AvailablePlaces.PetPenez];
+    private TOP_PLACES: Array<AvailablePlaces> = [AvailablePlaces.Kolkovna, AvailablePlaces.PetPenez];
 
     async getMenus(): Promise<Array<LunchMenuMessage>> {
         return Promise.all(this.TOP_PLACES.map(
@@ -42,6 +43,7 @@ export class MenuManager {
         if (text.includes("Kolkovna")) return new Kolkovna();
         if (text.includes("Trattoria")) return new LaCasaTrattoria();
         if (text.includes("peněz")) return new PetPenez();
+        if (text.includes("Kozlovna")) return new PetPenez();
         return null;
     }
 }
@@ -52,7 +54,8 @@ export enum AvailablePlaces{
     LaCasaTrattoria,
     BreakTimeBistro,
     CafeInmago,
-    PetPenez
+    PetPenez,
+    Kozlovna
 }
 
 
@@ -73,6 +76,9 @@ export class Places{
             } 
             case AvailablePlaces.PetPenez: { 
                 return new PetPenez();
+            } 
+            case AvailablePlaces.Kozlovna: { 
+                return new Kozlovna();
             } 
             default: { 
                 console.log(`Unknown restaurant name: ${restaurantName}`)
