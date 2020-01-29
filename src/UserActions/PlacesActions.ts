@@ -12,12 +12,13 @@ export function registerPlacesCommand(bot: Telegraf<ContextMessageUpdate>) {
                 ],
                 [
                     AvailablePlaces[AvailablePlaces.Kolkovna],
-                    AvailablePlaces[AvailablePlaces.LaCasaTrattoria]
+                    AvailablePlaces[AvailablePlaces.PetPenez],
+                    AvailablePlaces[AvailablePlaces.Kozlovna]
                 ],
                 [
                     AvailablePlaces[AvailablePlaces.BreakTimeBistro],
                     AvailablePlaces[AvailablePlaces.CafeInmago],
-                    AvailablePlaces[AvailablePlaces.PetPenez]
+                    AvailablePlaces[AvailablePlaces.LaCasaTrattoria]
                 ]
             ])
             .resize()
