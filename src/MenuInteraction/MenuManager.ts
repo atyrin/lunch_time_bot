@@ -43,7 +43,7 @@ export class MenuManager {
         if (text.includes("Kolkovna")) return new Kolkovna();
         if (text.includes("Trattoria")) return new LaCasaTrattoria();
         if (text.includes("peněz")) return new PetPenez();
-        if (text.includes("Kozlovna")) return new PetPenez();
+        if (text.includes("Kozlovna")) return new Kozlovna();
         return null;
     }
 }
